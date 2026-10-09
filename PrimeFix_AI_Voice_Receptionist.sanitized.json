@@ -1,0 +1,1100 @@
+{
+  "name": "PrimeFix AI Voice Receptionist",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "primefix-voice-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        208
+      ],
+      "id": "59e3860f-c3a3-4f4b-a53c-2193f7a877b5",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"PrimeFix webhook is working\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        384,
+        0
+      ],
+      "id": "2f436ce2-466e-46f4-a7b5-3e7ab959866a",
+      "name": "Return Test Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "697c41e0-ca9f-4352-bc7c-8d9710ac2590",
+              "name": "=action",
+              "value": "={{ $json.body.action }}",
+              "type": "string"
+            },
+            {
+              "id": "715d40c9-9b49-4222-9e0a-65c08117e12f",
+              "name": "=name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "54e4b307-aeeb-4993-bf32-ba2a8cabf3ef",
+              "name": "=phone",
+              "value": "={{ $json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "4ad83aae-e1cc-47c9-8727-8f7c01c45e07",
+              "name": "=email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "9b7cfba7-3a85-470f-bac9-02247f52452a",
+              "name": "=service_address",
+              "value": "={{ $json.body.service_address }}",
+              "type": "string"
+            },
+            {
+              "id": "573f48cf-9cb2-4d2f-a9ba-7b0fdbab8c0b",
+              "name": "=contact_id",
+              "value": "={{ $json.body.contact_id }}",
+              "type": "string"
+            },
+            {
+              "id": "90aa595e-067d-4e5c-851e-e709ece99d55",
+              "name": "service_type",
+              "value": "={{ $json.body.service_type }}",
+              "type": "string"
+            },
+            {
+              "id": "2b833cb5-0432-424f-be2d-da63909fab2c",
+              "name": "issue_description",
+              "value": "={{ $json.body.issue_description }}",
+              "type": "string"
+            },
+            {
+              "id": "50ab637e-2e2e-4047-8d6d-08c1060da9f2",
+              "name": "appointment_time",
+              "value": "={{ $json.body.appointment_time }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        0,
+        448
+      ],
+      "id": "d82e2439-ea77-4b5b-a7d1-8d3cce3395c0",
+      "name": "Extract Action"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "test_connection",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8b3fa556-2752-4203-86b2-fa17a9ee4311"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Test Connection"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f5e97ef8-74fa-415f-abc5-243ada52de3d",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "create_contact",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Create Contact"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "53d00532-e4a1-480e-bba3-20d820864c60",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "book_appointment",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Book Appointment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        256
+      ],
+      "id": "87bf93ae-1412-49a7-b3da-02be80116bd8",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "id",
+          "cachedResultName": "Your Airtable Base",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_CONTACTS_TABLE_ID",
+          "mode": "id",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $('Extract Action').first().json.name }}",
+            "phone": "={{ $('Extract Action').first().json.phone }}",
+            "email": "={{ $('Extract Action').first().json.email }}",
+            "service_address": "={{ $('Extract Action').first().json.service_address }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "service_address",
+              "displayName": "service_address",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Appointments",
+              "displayName": "Appointments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        304
+      ],
+      "id": "d7a21bbe-29dd-40a2-b48b-02ba17544fdb",
+      "name": "Create Contact in Airtable"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78c965f3-0d55-416e-a96d-840623efb45c",
+              "name": "success",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "df36a4f3-ef78-4ad8-b1fe-7a66f7eb3568",
+              "name": "message",
+              "value": "Contact created successfully",
+              "type": "string"
+            },
+            {
+              "id": "63caa32c-43b1-470c-af61-d07b04c5313f",
+              "name": "=contact_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1296,
+        320
+      ],
+      "id": "0b8930d8-525f-422a-a09d-320769626202",
+      "name": "Prepare Contact Response"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "id",
+          "cachedResultName": "Your Airtable Base",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_CONTACTS_TABLE_ID",
+          "mode": "id",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": ""
+        },
+        "filterByFormula": "={{ \"{Phone} = '\" + $json.phone + \"'\" }}",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        240
+      ],
+      "id": "169d452d-1b0e-4264-b7dc-1ee6bb1a92b1",
+      "name": "Search records",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b044ff92-57c4-428c-8cae-c037cc3ce186",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        816,
+        240
+      ],
+      "id": "6d0972c0-591c-4a89-a05f-44e64883f500",
+      "name": "Contact Already Exists?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "95d42cd4-ac2f-422f-bba2-defad68f6fb6",
+              "name": "success",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "54f520bb-fe98-4973-be4d-9b519b9fe3a1",
+              "name": "message",
+              "value": "Contact already exists",
+              "type": "string"
+            },
+            {
+              "id": "8fba1671-8849-45e4-ac74-502398ae1da5",
+              "name": "contact_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1152,
+        112
+      ],
+      "id": "b4054465-8b81-4331-bd96-ae1e59975480",
+      "name": "Prepare Existing Contact Response"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "id",
+          "cachedResultName": "Your Airtable Base",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_APPOINTMENTS_TABLE_ID",
+          "mode": "id",
+          "cachedResultName": "Appointments",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "appointment_id": "={{ 'APT-' + Date.now() }}",
+            "contact": "={{ [$json.contact_id] }}",
+            "service_type": "={{ $json.service_type }}",
+            "issue_description": "={{ $json.issue_description }}",
+            "appointment_time": "={{ $json.appointment_time }}",
+            "status": "Requested"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "appointment_id",
+              "displayName": "appointment_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "contact",
+              "displayName": "contact",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "service_type",
+              "displayName": "service_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Plumbing",
+                  "value": "Plumbing"
+                },
+                {
+                  "name": "Electrical",
+                  "value": "Electrical"
+                },
+                {
+                  "name": "HVAC",
+                  "value": "HVAC"
+                },
+                {
+                  "name": "Appliance Repair",
+                  "value": "Appliance Repair"
+                },
+                {
+                  "name": "General Maintenance",
+                  "value": "General Maintenance"
+                },
+                {
+                  "name": "Other",
+                  "value": "Other"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "issue_description",
+              "displayName": "issue_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "appointment_time",
+              "displayName": "appointment_time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Requested",
+                  "value": "Requested"
+                },
+                {
+                  "name": "Confirmed",
+                  "value": "Confirmed"
+                },
+                {
+                  "name": "Rescheduled",
+                  "value": "Rescheduled"
+                },
+                {
+                  "name": "Cancelled",
+                  "value": "Cancelled"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "google_event_id",
+              "displayName": "google_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        480
+      ],
+      "id": "92ad1283-4b60-494d-966d-28af85197627",
+      "name": "Create Appointment in Airtable"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8032b7f-5c3d-47d7-8d1a-52a5dd034986",
+              "name": "success",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "0ebc42f4-75f0-4f5a-836e-8ce2a3895267",
+              "name": "message",
+              "value": "Appointment confirmed successfully",
+              "type": "string"
+            },
+            {
+              "id": "2411efad-e517-4033-9286-4344cde94703",
+              "name": "appointment_record_id",
+              "value": "={{ $('Create Appointment in Airtable').first().json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "b631761b-17bc-413d-b98e-f1b130740a29",
+              "name": "appointment_id",
+              "value": "={{ $('Create Appointment in Airtable').first().json.fields.appointment_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ec307b7d-6ead-4ddd-b180-53be76ff0eb8",
+              "name": "status",
+              "value": "Confirmed",
+              "type": "string"
+            },
+            {
+              "id": "47d8b493-acc1-4ef6-9a68-e104b488a4ae",
+              "name": "calendar_event_id",
+              "value": "={{ $('Create an event').first().json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1392,
+        528
+      ],
+      "id": "47cb4f44-41e0-4f8f-909f-ccabfd6e92ae",
+      "name": "Prepare Appointment Response"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1632,
+        320
+      ],
+      "id": "437fa4c7-bb8b-4ca4-84e5-3b38997d5796",
+      "name": "Return Webhook Response"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_CALENDAR_ID",
+          "mode": "id",
+          "cachedResultName": "Your Google Calendar"
+        },
+        "start": "={{ $json.fields.appointment_time }}",
+        "end": "={{ DateTime.fromISO($json.fields.appointment_time).plus({ hours: 1 }).toISO() }}",
+        "additionalFields": {
+          "description": "={{ 'Issue: ' + $json.fields.issue_description + '\\nAppointment ID: ' + $json.fields.appointment_id + '\\nContact Record: ' + $json.fields.contact[0] }}",
+          "summary": "={{ 'PrimeFix - ' + $json.fields.service_type + ' Service Appointment' }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        480
+      ],
+      "id": "2cfeef95-f141-404f-a5a1-860f9f4e6ef1",
+      "name": "Create an event"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "id",
+          "cachedResultName": "Your Airtable Base",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_APPOINTMENTS_TABLE_ID",
+          "mode": "id",
+          "cachedResultName": "Appointments",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create Appointment in Airtable').first().json.id }}",
+            "google_event_id": "={{ $json.id }}",
+            "status": "Confirmed"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "appointment_id",
+              "displayName": "appointment_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contact",
+              "displayName": "contact",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "service_type",
+              "displayName": "service_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Plumbing",
+                  "value": "Plumbing"
+                },
+                {
+                  "name": "Electrical",
+                  "value": "Electrical"
+                },
+                {
+                  "name": "HVAC",
+                  "value": "HVAC"
+                },
+                {
+                  "name": "Appliance Repair",
+                  "value": "Appliance Repair"
+                },
+                {
+                  "name": "General Maintenance",
+                  "value": "General Maintenance"
+                },
+                {
+                  "name": "Other",
+                  "value": "Other"
+                },
+                {
+                  "name": "AC Repair",
+                  "value": "AC Repair"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "issue_description",
+              "displayName": "issue_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "appointment_time",
+              "displayName": "appointment_time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Requested",
+                  "value": "Requested"
+                },
+                {
+                  "name": "Confirmed",
+                  "value": "Confirmed"
+                },
+                {
+                  "name": "Rescheduled",
+                  "value": "Rescheduled"
+                },
+                {
+                  "name": "Cancelled",
+                  "value": "Cancelled"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "google_event_id",
+              "displayName": "google_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        480
+      ],
+      "id": "d8d99ce5-7f32-40ea-b3df-92762161ae60",
+      "name": "Update record"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Action": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Return Test Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Appointment in Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Contact in Airtable": {
+      "main": [
+        [
+          {
+            "node": "Prepare Contact Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Contact Response": {
+      "main": [
+        [
+          {
+            "node": "Return Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Contact Already Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Already Exists?": {
+      "main": [
+        [
+          {
+            "node": "Prepare Existing Contact Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Contact in Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Existing Contact Response": {
+      "main": [
+        [
+          {
+            "node": "Return Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Appointment in Airtable": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Appointment Response": {
+      "main": [
+        [
+          {
+            "node": "Return Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record": {
+      "main": [
+        [
+          {
+            "node": "Prepare Appointment Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1
+}
